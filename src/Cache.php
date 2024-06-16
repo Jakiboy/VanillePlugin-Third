@@ -15,10 +15,10 @@ declare(strict_types=1);
 namespace VanilleThird;
 
 use VanillePlugin\inc\GlobalConst;
-use VanillePlugin\third\inc\module\{
+use VanilleThird\inc\module\{
 	Opcache, Apcu
 };
-use VanillePlugin\third\inc\plugin\{
+use VanilleThird\inc\plugin\{
 	Redis, WpRocket, LiteSpeed,
 	WpOptimize, W3TotalCache, Kinsta,
 	WpFastestCache, WpSuperCache, CacheEnabler

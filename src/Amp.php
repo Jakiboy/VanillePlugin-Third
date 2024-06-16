@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace VanilleThird;
 
-use VanillePlugin\third\inc\plugin\Amp as Plugin;
+use VanilleThird\inc\plugin\Amp as Plugin;
 
 /**
  * Third-Party AMP helper class.

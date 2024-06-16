@@ -14,6 +14,11 @@ declare(strict_types=1);
 
 namespace VanilleThird\inc\plugin;
 
+/**
+ * WooCommerce plugin helper class.
+ * 
+ * @see https://github.com/woocommerce/woocommerce
+ */
 final class WooCommerce
 {
 	/**

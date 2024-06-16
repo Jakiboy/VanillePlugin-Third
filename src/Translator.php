@@ -17,7 +17,7 @@ namespace VanilleThird;
 use VanillePlugin\inc\{
 	Stringify, TypeCheck
 };
-use VanillePlugin\third\inc\plugin\{
+use VanilleThird\inc\plugin\{
 	Wpml, Polylang, Qtranslate
 };
 
