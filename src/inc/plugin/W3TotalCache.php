@@ -14,6 +14,8 @@ declare(strict_types=1);
 
 namespace VanilleThird\inc\plugin;
 
+use VanilleThird\Helper;
+
 /**
  * W3 Total Cache plugin helper class.
  * 
@@ -29,7 +31,7 @@ final class W3TotalCache
 	 */
 	public static function isEnabled() : bool
 	{
-		return defined('W3TC_IN_MINIFY');
+		return Helper::isFunction('w3tc_pgcache_flush');
 	}
 
 	/**
@@ -41,7 +43,7 @@ final class W3TotalCache
 	 */
 	public static function purge() : bool
 	{
-	    if ( function_exists('w3tc_pgcache_flush') ) { 
+	    if ( self::isEnabled() ) { 
 	        w3tc_pgcache_flush();
 	        return true;
 	    }

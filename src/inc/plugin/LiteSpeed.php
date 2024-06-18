@@ -14,9 +14,11 @@ declare(strict_types=1);
 
 namespace VanilleThird\inc\plugin;
 
+use VanilleThird\Helper;
+
 /**
  * LiteSpeed plugin helper class.
- * 
+ *
  * @see https://github.com/litespeedtech/lscache_wp
  */
 final class LiteSpeed
@@ -29,7 +31,7 @@ final class LiteSpeed
 	 */
 	public static function isEnabled() : bool
 	{
-		return defined('LSCWP_BASENAME');
+		return Helper::isClass('\LiteSpeed\Purge');
 	}
 	
 	/**
@@ -41,7 +43,7 @@ final class LiteSpeed
 	 */
 	public static function purge() : bool
 	{
-		if ( class_exists('\LiteSpeed\Purge') ) {
+		if ( self::isEnabled() ) {
 			\LiteSpeed\Purge::purge_all();
 			return true;
 		}

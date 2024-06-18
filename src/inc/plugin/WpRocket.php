@@ -14,13 +14,18 @@ declare(strict_types=1);
 
 namespace VanilleThird\inc\plugin;
 
+use VanilleThird\Helper;
+
 /**
  * WP Rocket plugin helper class.
- * 
+ *
  * @see https://github.com/wp-media/
  */
 final class WpRocket
 {
+	/**
+	 * @access public
+	 */
 	public static $options = [];
 
 	/**
@@ -31,7 +36,7 @@ final class WpRocket
 	 */
 	public static function isEnabled() : bool
 	{
-		return defined('WP_ROCKET_VERSION');
+		return Helper::isFunction('rocket_clean_domain');
 	}
 
 	/**
@@ -42,7 +47,7 @@ final class WpRocket
 	 */
 	public static function purge() : bool
 	{
-		if ( function_exists('rocket_clean_domain') ) {
+		if ( self::isEnabled() ) {
 			rocket_clean_domain();
 			return true;
 		}
@@ -56,16 +61,16 @@ final class WpRocket
 	 * @param string $name
 	 * @return void
 	 */
-	public static function loadGeotargeting(string $name)
+	public static function loadGeo(string $name)
 	{
 		// Set options
 		static::$options['geotargeting'] = $name;
 
 		// Creates cache file for each value of a specified cookie
-		add_filter('rocket_cache_dynamic_cookies', [new self, 'setCookies'], 80);
+		Helper::addFilter('rocket_cache_dynamic_cookies', [new self, 'setCookies'], 80);
 
 		// Prevents caching until the specified cookie is set
-		add_filter('rocket_cache_mandatory_cookies', [new self, 'setCookies'], 80);
+		Helper::addFilter('rocket_cache_mandatory_cookies', [new self, 'setCookies'], 80);
 	}
 
 	/**
@@ -75,16 +80,16 @@ final class WpRocket
 	 * @param string $name
 	 * @return void
 	 */
-	public static function enableGeotargeting(string $name)
+	public static function enableGeo(string $name)
 	{
 		// Set options
 		static::$options['geotargeting'] = $name;
 
 		// Creates cache file for each value of a specified cookie
-		add_filter('rocket_cache_dynamic_cookies', [new self, 'setCookies'], 80);
+		Helper::addFilter('rocket_cache_dynamic_cookies', [new self, 'setCookies'], 80);
 
 		// Prevents caching until the specified cookie is set
-		add_filter('rocket_cache_mandatory_cookies', [new self, 'setCookies'], 80);
+		Helper::addFilter('rocket_cache_mandatory_cookies', [new self, 'setCookies'], 80);
 
 		// Update rewrite
 		self::updateRewrite();
@@ -103,16 +108,16 @@ final class WpRocket
 	 * @param string $name
 	 * @return void
 	 */
-	public static function disableGeotargeting(string $name)
+	public static function disableGeo(string $name)
 	{
 		// Set options
 		static::$options['geotargeting'] = $name;
 		
 		// Remove dynamic cookies
-		remove_filter('rocket_cache_dynamic_cookies', [new self, 'setCookies'], 80);
+		Helper::removeFilter('rocket_cache_dynamic_cookies', [new self, 'setCookies'], 80);
 
 		// Remove mandatory cookies
-		remove_filter('rocket_cache_mandatory_cookies', [new self, 'setCookies'], 80);
+		Helper::removeFilter('rocket_cache_mandatory_cookies', [new self, 'setCookies'], 80);
 
 		// Update rewrite
 		self::updateRewrite();
@@ -148,7 +153,7 @@ final class WpRocket
 	 */
 	public static function updateRewrite()
 	{
-		if ( function_exists('flush_rocket_htaccess') ) {
+		if ( Helper::isFunction('flush_rocket_htaccess') ) {
 			flush_rocket_htaccess();
 		}
 	}
@@ -161,8 +166,8 @@ final class WpRocket
 	 */
 	public static function regenerateConfiguration()
 	{
-		if ( function_exists('rocket_generate_config_file')
-		  && function_exists('get_rocket_cache_reject_uri') ) {
+		if ( Helper::isFunction('rocket_generate_config_file')
+		  && Helper::isFunction('get_rocket_cache_reject_uri') ) {
 			rocket_generate_config_file();
 		}
 	}

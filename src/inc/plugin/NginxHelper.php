@@ -12,38 +12,43 @@
 
 declare(strict_types=1);
 
-namespace VanilleThird\inc\module;
+namespace VanilleThird\inc\plugin;
 
 use VanilleThird\Helper;
 
 /**
- * Opcache module helper class.
+ * Nginx Helper plugin helper class.
  * 
- * @see https://www.php.net/manual/en/book.opcache.php
+ * @see https://github.com/rtCamp/nginx-helper
  */
-final class Opcache
+final class NginxHelper
 {
 	/**
-	 * Check module plugin is enabled.
-	 * 
+	 * Check whether plugin is enabled.
+	 *
 	 * @access public
 	 * @return bool
 	 */
 	public static function isEnabled() : bool
 	{
-		return Helper::isFunction('opcache_reset');
+		return Helper::isClass('\Nginx_Helper_Admin');
 	}
 	
 	/**
 	 * Purge cache.
-	 * 
+	 *
 	 * @access public
 	 * @return bool
+	 * @internal
 	 */
 	public static function purge() : bool
 	{
-		if ( Helper::isFunction('opcache_reset') ) {
-			return opcache_reset();
+		if ( self::isEnabled() ) {
+			global $nginx_purger;
+			if ( Helper::hasMethod($nginx_purger, 'purge_all') ) {
+				$nginx_purger->purge_all();
+				return true;
+			}
 		}
 		return false;
 	}

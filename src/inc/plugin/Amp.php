@@ -14,28 +14,32 @@ declare(strict_types=1);
 
 namespace VanilleThird\inc\plugin;
 
+use VanilleThird\Helper;
+
 /**
  * AMP plugin helper class.
- * 
+ *
  * @see https://github.com/ampproject/amp-wp/
  * @see https://github.com/ahmedkaludi/Accelerated-Mobile-Pages
  */
 final class Amp
 {
 	/**
-	 * Check whether plugin is active (functional).
-	 * 
+	 * Check whether plugin is active.
+	 *
 	 * @access public
 	 * @return bool
 	 */
 	public static function isActive() : bool
 	{
-		if ( function_exists('amp_is_request') ) {
+		if ( Helper::isFunction('amp_is_request') ) {
 			return amp_is_request();
 		}
-		if ( function_exists('ampforwp_is_amp_endpoint') ) {
+
+		if ( Helper::isFunction('ampforwp_is_amp_endpoint') ) {
 			return ampforwp_is_amp_endpoint();
 		}
+		
 		return false;
 	}
 }

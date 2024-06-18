@@ -14,36 +14,41 @@ declare(strict_types=1);
 
 namespace VanilleThird\inc\plugin;
 
+use VanilleThird\Helper;
+
 /**
  * Redis Object Cache plugin helper class.
- * 
+ *
  * @see https://github.com/rhubarbgroup/redis-cache
  */
 final class Redis
 {
 	/**
 	 * Check whether plugin is enabled.
-	 * 
+	 *
 	 * @access public
 	 * @return bool
 	 */
 	public static function isEnabled() : bool
 	{
-		return class_exists('\Rhubarb\RedisCache\Plugin');
+		return Helper::isClass('\Rhubarb\RedisCache\Plugin');
 	}
 
 	/**
 	 * Purge cache.
-	 * 
+	 *
 	 * @access public
 	 * @return bool
 	 * @internal
 	 */
 	public static function purge() : bool
 	{
-		global $wp_object_cache;
-		if ( method_exists($wp_object_cache, 'redis_instance') ) {
-			return $wp_object_cache->redis_instance()->flushall();
+		if ( self::isEnabled() ) {
+			global $wp_object_cache;
+			if ( Helper::hasMethod($wp_object_cache, 'redis_instance') ) {
+				$wp_object_cache->redis_instance()->flushall();
+				return true;
+			}
 		}
 		return false;
 	}

@@ -14,10 +14,6 @@ declare(strict_types=1);
 
 namespace VanilleThird;
 
-use VanillePlugin\inc\{
-	Hook, TypeCheck
-};
-
 /**
  * Third-Party editor helper class.
  */
@@ -25,24 +21,24 @@ final class Editor
 {
 	/**
 	 * Check whether editor is classic.
-	 * 
+	 *
 	 * @access public
 	 * @return bool
 	 */
 	public static function isClassic() : bool
 	{
-		return TypeCheck::isClass('Classic_Editor');
+		return Helper::isClass('\Classic_Editor');
 	}
 
 	/**
 	 * Check whether editor is gutenberg.
-	 * 
+	 *
 	 * @access public
 	 * @return bool
 	 */
 	public static function isGutenberg() : bool
 	{
-		if ( Hook::hasFilter('replace_editor', 'gutenberg_init') ) {
+		if ( Helper::hasFilter('replace_editor', 'gutenberg_init') ) {
 			return true;
 			
 		} elseif ( !self::isClassic() ) {

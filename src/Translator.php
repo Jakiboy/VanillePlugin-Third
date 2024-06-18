@@ -14,67 +14,48 @@ declare(strict_types=1);
 
 namespace VanilleThird;
 
-use VanillePlugin\inc\{
-	Stringify, TypeCheck
-};
-use VanilleThird\inc\plugin\{
-	Wpml, Polylang, Qtranslate
-};
-
 /**
  * Third-Party translator helper class.
  */
 final class Translator
 {
 	/**
-	 * Check whether translator is active (functional).
-	 * 
 	 * @access public
-	 * @return mixed
 	 */
-	public static function isActive()
+	public const PLUGINS = [
+		'Polylang',
+		'Wpml'
+	];
+
+	/**
+	 * Check whether translator is active.
+	 *
+	 * @access public
+	 * @return bool
+	 */
+	public static function isActive() : bool
 	{
-		/**
-		 * Check WPML.
-		 */
-		if ( Wpml::isEnabled() && Wpml::isActive() ) {
-			return 'wpml';
+		foreach (self::PLUGINS as $plugn) {
+			$plugn = __NAMESPACE__ . "\\inc\\plugin\\{$plugn}";
+			if ( $plugn::isActive() ) {
+				return true;
+			}
 		}
-
-		/**
-		 * Check Polylang.
-		 */
-		if ( Polylang::isEnabled() && Polylang::isActive() ) {
-			return 'polylang';
-		}
-
-		/**
-		 * Check qTranslate.
-		 */
-		if ( Qtranslate::isEnabled() && Qtranslate::isActive() ) {
-			return 'qtranslate';
-		}
-
 		return false;
 	}
 
 	/**
 	 * Get translator active languages.
-	 * 
+	 *
 	 * @access public
 	 * @return mixed
 	 */
-	public static function getActiveLanguages()
+	public static function getLanguages()
 	{
-		if ( ($plugin = self::isActive()) ) {
-			if ( $plugin == 'wpml' ) {
-				return Wpml::getActiveLanguages();
-			}
-			if ( $plugin == 'polylang' ) {
-				return Polylang::getActiveLanguages();
-			}
-			if ( $plugin == 'qtranslate' ) {
-				return Qtranslate::getActiveLanguages();
+		foreach (self::PLUGINS as $plugn) {
+			$plugn = __NAMESPACE__ . "\\inc\\plugin\\{$plugn}";
+			if ( $plugn::isActive() ) {
+				return $plugn::getLanguages();
 			}
 		}
 		return false;
@@ -82,98 +63,20 @@ final class Translator
 
 	/**
 	 * Get translator locale.
-	 * 
+	 * [Action: head].
+	 * [Action: admin-init].
+	 *
 	 * @access public
 	 * @return mixed
 	 */
 	public static function getLocale()
 	{
-		if ( ($plugin = self::isActive()) ) {
-			if ( $plugin == 'wpml' ) {
-				return Wpml::getLocale();
-			}
-			if ( $plugin == 'polylang' ) {
-				return Polylang::getLocale();
+		foreach (self::PLUGINS as $plugn) {
+			$plugn = __NAMESPACE__ . "\\inc\\plugin\\{$plugn}";
+			if ( $plugn::isActive() ) {
+				return $plugn::getLocale();
 			}
 		}
 		return false;
-	}
-
-	/**
-	 * Sanitize translator locale.
-	 * 
-	 * @access public
-	 * @param string $locale
-	 * @return string
-	 */
-	public static function sanitizeLocale(string $locale) : string
-	{
-		$locale = Stringify::lowercase($locale);
-		$locale = Stringify::replace('-', '_', $locale);
-		return $locale;
-	}
-
-	/**
-	 * Get normalized country code.
-	 * 
-	 * @access public
-	 * @param string $locale
-	 * @return string
-	 */
-	public static function getCountry(string $locale) : string
-	{
-		$locale = self::sanitizeLocale($locale);
-		if ( strpos($locale, '_') !== false ) {
-			$locale = explode('_', $locale);
-		}
-
-		if ( TypeCheck::isArray($locale) ) {
-			if ( count($locale) == 2 ) {
-				$country = $locale[1];
-
-			} else {
-				$country = $locale[0];
-			}
-
-		} else {
-			$country = $locale;
-		}
-
-		switch ($country) {
-			case 'gb':
-			case 'en':
-			case 'en-gb':
-				$country = 'uk';
-				break;
-			case 'en-us':
-				$country = 'us';
-				break;
-		}
-
-		return $country;
-	}
-
-	/**
-	 * Get normalized language code.
-	 * 
-	 * @access public
-	 * @param string $locale
-	 * @return string
-	 */
-	public static function getLanguage(string $locale) : string
-	{
-		$locale = self::sanitizeLocale($locale);
-		if ( strpos($locale, '_') !== false ) {
-			$locale = explode('_', $locale);
-		}
-
-		if ( TypeCheck::isArray($locale) ) {
-			$lang = $locale[0];
-
-		} else {
-			$lang = $locale;
-		}
-
-		return $lang;
 	}
 }

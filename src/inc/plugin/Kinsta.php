@@ -14,9 +14,11 @@ declare(strict_types=1);
 
 namespace VanilleThird\inc\plugin;
 
+use VanilleThird\Helper;
+
 /**
  * Kinsta (MU) plugin helper class.
- * 
+ *
  * @see https://github.com/retlehs/kinsta-mu-plugins
  */
 final class Kinsta
@@ -29,7 +31,7 @@ final class Kinsta
 	 */
 	public static function isEnabled() : bool
 	{
-		return defined('KINSTAMU_VERSION');
+		return Helper::isClass('\Kinsta\Cache');
 	}
 
 	/**
@@ -41,7 +43,7 @@ final class Kinsta
 	 */
 	public static function purge() : bool
 	{
-		if ( class_exists('\Kinsta\Cache') ) {
+		if ( self::isEnabled() ) {
 			global $kinsta_cache;
             if ( is_object($kinsta_cache) ) {
             	$kinsta_cache->kinsta_cache_purge->purge_complete_caches();

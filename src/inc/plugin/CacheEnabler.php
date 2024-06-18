@@ -14,6 +14,8 @@ declare(strict_types=1);
 
 namespace VanilleThird\inc\plugin;
 
+use VanilleThird\Helper;
+
 /**
  * Cache Enabler plugin helper class.
  * 
@@ -23,25 +25,25 @@ final class CacheEnabler
 {
 	/**
 	 * Check whether plugin is enabled.
-	 * 
+	 *
 	 * @access public
 	 * @return bool
 	 */
 	public static function isEnabled() : bool
 	{
-		return defined('CACHE_ENABLER_VERSION');
+		return Helper::isClass('\Cache_Enabler');
 	}
 	
 	/**
 	 * Purge cache.
-	 * 
+	 *
 	 * @access public
 	 * @return bool
 	 * @internal
 	 */
 	public static function purge() : bool
 	{
-		if ( class_exists('\Cache_Enabler') ) {
+		if ( self::isEnabled() ) {
 			\Cache_Enabler::clear_complete_cache();
 			return true;
 		}

@@ -22,8 +22,9 @@ use VanilleThird\inc\plugin\Amp as Plugin;
 final class Amp
 {
 	/**
-	 * Check whether AMP is active (functional).
-	 * 
+	 * Check whether AMP is active.
+	 * [Action: head].
+	 *
 	 * @access public
 	 * @return bool
 	 */

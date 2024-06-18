@@ -14,6 +14,8 @@ declare(strict_types=1);
 
 namespace VanilleThird\inc\plugin;
 
+use VanilleThird\Helper;
+
 /**
  * WooCommerce plugin helper class.
  * 
@@ -28,7 +30,7 @@ final class WooCommerce
 	 */
 	public static function isEnabled()
 	{
-  		return class_exists('WooCommerce');
+  		return Helper::isClass('\WooCommerce');
 	}
 
 	/**

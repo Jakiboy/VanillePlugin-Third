@@ -17,33 +17,34 @@ namespace VanilleThird\inc\module;
 use VanilleThird\Helper;
 
 /**
- * Opcache module helper class.
- * 
- * @see https://www.php.net/manual/en/book.opcache.php
+ * Memcached module helper class.
+ *
+ * @see https://www.php.net/manual/en/class.memcached.php
  */
-final class Opcache
+final class Memcached
 {
 	/**
 	 * Check module plugin is enabled.
-	 * 
+	 *
 	 * @access public
 	 * @return bool
 	 */
 	public static function isEnabled() : bool
 	{
-		return Helper::isFunction('opcache_reset');
+		return Helper::isClass('\Memcached');
 	}
-	
+
 	/**
 	 * Purge cache.
-	 * 
+	 *
 	 * @access public
 	 * @return bool
 	 */
 	public static function purge() : bool
 	{
-		if ( Helper::isFunction('opcache_reset') ) {
-			return opcache_reset();
+		if ( Helper::isClass('\Memcached') ) {
+			$cache = new \Memcached();
+			return $cache->flush();
 		}
 		return false;
 	}

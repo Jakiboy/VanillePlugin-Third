@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace VanilleThird\inc\module;
 
-use VanillePlugin\inc\TypeCheck;
+use VanilleThird\Helper;
 
 /**
  * APCu module helper class.
@@ -31,7 +31,7 @@ final class Apcu
 	 */
 	public static function isEnabled() : bool
 	{
-		return TypeCheck::isFunction('apcu_clear_cache');
+		return Helper::isFunction('apcu_clear_cache');
 	}
 
 	/**
@@ -42,6 +42,9 @@ final class Apcu
 	 */
 	public static function purge() : bool
 	{
-		return apcu_clear_cache();
+		if ( Helper::isFunction('apcu_clear_cache') ) {
+			return apcu_clear_cache();
+		}
+		return false;
 	}
 }

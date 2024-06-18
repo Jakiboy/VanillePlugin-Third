@@ -12,26 +12,26 @@
 
 declare(strict_types=1);
 
-namespace VanilleThird\inc\module;
+namespace VanilleThird\inc\plugin;
 
 use VanilleThird\Helper;
 
 /**
- * Opcache module helper class.
+ * Cloudflare plugin helper class.
  * 
- * @see https://www.php.net/manual/en/book.opcache.php
+ * @see https://github.com/cloudflare/Cloudflare-WordPress
  */
-final class Opcache
+final class Cloudflare
 {
 	/**
-	 * Check module plugin is enabled.
-	 * 
+	 * Check whether plugin is enabled.
+	 *
 	 * @access public
 	 * @return bool
 	 */
 	public static function isEnabled() : bool
 	{
-		return Helper::isFunction('opcache_reset');
+		return Helper::isClass('\CF\WordPress\Hooks');
 	}
 	
 	/**
@@ -39,11 +39,14 @@ final class Opcache
 	 * 
 	 * @access public
 	 * @return bool
+	 * @internal
 	 */
 	public static function purge() : bool
 	{
-		if ( Helper::isFunction('opcache_reset') ) {
-			return opcache_reset();
+		if ( self::isEnabled() ) {
+			$cache = new \CF\WordPress\Hooks;
+			$cache->purgeCacheEverything();
+			return true;
 		}
 		return false;
 	}

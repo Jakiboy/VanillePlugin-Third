@@ -14,69 +14,113 @@ declare(strict_types=1);
 
 namespace VanilleThird\inc\plugin;
 
+use VanilleThird\Helper;
+
 /**
  * Polylang plugin helper class.
- * 
+ *
  * @see https://github.com/polylang/polylang
  */
 final class Polylang
 {
 	/**
 	 * Check whether plugin is enabled.
-	 * 
+	 *
 	 * @access public
 	 * @return bool
 	 */
 	public static function isEnabled() : bool
 	{
-		return defined('POLYLANG_VERSION');
+		return Helper::isClass('\Polylang');
 	}
 
 	/**
-	 * Check whether plugin is active (functional).
-	 * 
+	 * Check whether plugin is active.
+	 *
 	 * @access public
 	 * @return bool
 	 */
 	public static function isActive() : bool
 	{
-		global $polylang;
-		if ( !empty($polylang) && function_exists('pll_languages_list') ) {
-			if ( !empty(pll_languages_list()) ) {
-				return true;
+		if ( self::isEnabled() ) {
+			return (bool)self::getLanguages();
+		}
+		return false;
+	}
+
+	/**
+	 * Get current locale.
+	 *
+	 * @access public
+	 * @return mixed
+	 */
+	public static function getLocale()
+	{
+		if ( ($locale = self::getLocalById()) ) {
+			return $locale;
+		}
+		return self::getLocaleByUrl();
+	}
+	
+	/**
+	 * Get active languages.
+	 *
+	 * @access public
+	 * @return mixed
+	 */
+	public static function getLanguages()
+	{
+		if ( Helper::isFunction('pll_languages_list') ) {
+			return pll_languages_list();
+		}
+		return false;
+	}
+
+	/**
+	 * Get referer Id.
+	 *
+	 * @access public
+	 * @return mixed
+	 */
+	public static function getRefererId()
+	{
+		if ( ($url = wp_get_referer()) ) {
+			if ( strpos($url, 'admin.php') == false ) {
+				return url_to_postid($url);
 			}
 		}
 		return false;
 	}
 
 	/**
-	 * Get active languages.
-	 * 
+	 * Get locale by Id.
+	 *
 	 * @access public
 	 * @return mixed
 	 */
-	public static function getActiveLanguages()
+	public static function getLocalById()
 	{
-		return pll_languages_list();
-	}
-
-	/**
-	 * Get current locale.
-	 * 
-	 * @access public
-	 * @return mixed
-	 */
-	public static function getLocale()
-	{
-		if ( ($url = wp_get_referer()) ) {
-			if ( strpos($url, 'admin.php') == false ) {
-				if ( ($id = url_to_postid($url)) ) {
-					if ( ($lang = pll_get_post_language($id, 'locale')) ) {
-						return $lang;
-					}
+		if ( Helper::isFunction('pll_get_post_language') ) {
+			if ( ($id = self::getRefererId()) ) {
+				if ( ($locale = pll_get_post_language($id, 'locale')) ) {
+					return $locale;
 				}
 			}
 		}
-		return pll_current_language('locale');
+		return false;
+	}
+
+	/**
+	 * Get locale by URL.
+	 *
+	 * @access public
+	 * @return mixed
+	 */
+	public static function getLocaleByUrl()
+	{
+		if ( Helper::isFunction('pll_current_language') ) {
+			return pll_current_language('locale');
+		}
+		return false;
 	}
 }

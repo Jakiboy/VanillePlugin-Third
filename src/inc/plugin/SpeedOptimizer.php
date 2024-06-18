@@ -12,26 +12,26 @@
 
 declare(strict_types=1);
 
-namespace VanilleThird\inc\module;
+namespace VanilleThird\inc\plugin;
 
 use VanilleThird\Helper;
 
 /**
- * Opcache module helper class.
+ * Speed Optimizer (SG Optimizer) plugin helper class.
  * 
- * @see https://www.php.net/manual/en/book.opcache.php
+ * @see https://plugins.trac.wordpress.org/browser/sg-cachepress/
  */
-final class Opcache
+final class SpeedOptimizer
 {
 	/**
-	 * Check module plugin is enabled.
-	 * 
+	 * Check whether plugin is enabled.
+	 *
 	 * @access public
 	 * @return bool
 	 */
 	public static function isEnabled() : bool
 	{
-		return Helper::isFunction('opcache_reset');
+		return Helper::isFunction('sg_cachepress_purge_everything');
 	}
 	
 	/**
@@ -39,11 +39,13 @@ final class Opcache
 	 * 
 	 * @access public
 	 * @return bool
+	 * @internal
 	 */
 	public static function purge() : bool
 	{
-		if ( Helper::isFunction('opcache_reset') ) {
-			return opcache_reset();
+		if ( self::isEnabled() ) {
+			sg_cachepress_purge_everything();
+			return true;
 		}
 		return false;
 	}
