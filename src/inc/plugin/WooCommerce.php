@@ -18,93 +18,199 @@ use VanilleThird\Helper;
 
 /**
  * WooCommerce plugin helper class.
- * 
+ *
  * @see https://github.com/woocommerce/woocommerce
  */
 final class WooCommerce
 {
 	/**
+	 * Check whether plugin is active.
+	 *
 	 * @access public
-	 * @param array void
-	 * @return boolean
+	 * @return bool
 	 */
-	public static function isEnabled()
+	public static function isEnabled() : bool
 	{
   		return Helper::isClass('\WooCommerce');
 	}
 
 	/**
+	 * Get product by Id.
+	 *
 	 * @access public
 	 * @param mixed $id
-	 * @return array
+	 * @return mixed
 	 */
-	public static function getProduct($id)
+	public static function getProduct($id = null)
 	{
-		return wc_get_product(intval($id));
-	}
-	
-	/**
-	 * @access public
-	 * @param array $data
-	 * @return array
-	 */
-	public static function addInput($data = [])
-	{
-  		woocommerce_wp_text_input($data);
+		if ( Helper::isFunction('wc_get_product') ) {
+			return wc_get_product($id);
+		}
+		return false;
 	}
 
 	/**
+	 * Add product options input.
+	 * [Action: woocommerce_product_options_general_product_data].
+	 *
 	 * @access public
-	 * @param array $data
-	 * @return array
+	 * @param mixed $field
+	 * @return void
 	 */
-	public static function addCheckbox($data = [])
+	public static function addInput($field = [])
 	{
-  		woocommerce_wp_checkbox($data);
+		if ( Helper::isFunction('woocommerce_wp_text_input') ) {
+			woocommerce_wp_text_input($field);
+		}
 	}
 
 	/**
+	 * Add product options checkbox.
+	 * [Action: woocommerce_product_options_general_product_data].
+	 *
 	 * @access public
-	 * @param array $data
+	 * @param array $field
 	 * @return array
 	 */
-	public static function addSelect($data = [])
+	public static function addCheckbox($field = [])
 	{
-  		woocommerce_wp_select($data);
+		if ( Helper::isFunction('woocommerce_wp_checkbox') ) {
+			woocommerce_wp_checkbox($field);
+		}
+	}
+
+	/**
+	 * Add product options select.
+	 * [Action: woocommerce_product_options_general_product_data].
+	 *
+	 * @access public
+	 * @param array $field
+	 * @return array
+	 */
+	public static function addSelect($field = [])
+	{
+		if ( Helper::isFunction('woocommerce_wp_select') ) {
+			woocommerce_wp_select($field);
+		}
 	}
 	
 	/**
+	 * Get product meta.
+	 *
 	 * @access public
-	 * @param int $key
+	 * @param string $key
 	 * @param mixed $product
 	 * @return mixed
 	 */
-	public static function getMeta($key, $product)
+	public static function getMeta(string $key, $product = null)
 	{
-		if ( is_object($product) ) {
-			$product = self::getProduct($product->get_id());
-			
-		} else {
-			$product = (object)self::getProduct($product);
+		if ( !Helper::isSubClassOf($product, '\WC_Data') ) {
+			$product = self::getProduct($product);
 		}
-  		return $product->get_meta($key);
+		return ($product) ? $product->get_meta($key) : false;
 	}
 
 	/**
+	 * Update product meta.
+	 * [Action: woocommerce_process_product_meta].
+	 *
 	 * @access public
-	 * @param int $key
+	 * @param string $key
+	 * @param mixed $value
 	 * @param mixed $product
-	 * @return int
+	 * @return mixed
 	 */
-	public static function updateMeta($key, $value, $product)
+	public static function updateMeta(string $key, $value, $product = null)
 	{
-		if ( is_object($product) ) {
-			$product = self::getProduct($product->get_id());
-
-		} else {
+		if ( !Helper::isSubClassOf($product, '\WC_Data') ) {
 			$product = self::getProduct($product);
 		}
-    	$product->update_meta_data($key, sanitize_text_field($value));
-    	return $product->save();
+		if ( $product ) {
+			$product->update_meta_data($key, Helper::sanitizeText($value));
+			return $product->save();
+		}
+		return false;
+	}
+
+	/**
+	 * Remove add to cart button.
+	 * [Action: woocommerce_single_variation].
+	 * [Callback: woocommerce_single_variation_add_to_cart_button].
+	 *
+	 * @access public
+	 * @param mixed $priority
+	 * @return bool
+	 */
+	public static function removeCartButton(int $priority = 20) : bool
+	{
+		$hook = 'woocommerce_single_variation';
+		$callback = 'woocommerce_single_variation_add_to_cart_button';
+		return Helper::removeAction($hook, $callback, $priority);
+	}
+
+	/**
+	 * Disable price.
+	 * [Action: woocommerce_get_price_html].
+	 * [Callback: __return_false].
+	 *
+	 * @access public
+	 * @param mixed $priority
+	 * @return void
+	 */
+	public static function disablePrice(int $priority = 20)
+	{
+		$hook = 'woocommerce_get_price_html';
+		$callback = '__return_false';
+		Helper::addFilter($hook, $callback, $priority);
+	}
+
+	/**
+	 * Disable stock.
+	 * [Action: woocommerce_out_of_stock_message].
+	 * [Callback: __return_false].
+	 *
+	 * @access public
+	 * @param mixed $priority
+	 * @return void
+	 */
+	public static function disableStock(int $priority = 20)
+	{
+		$hook = 'woocommerce_out_of_stock_message';
+		$callback = '__return_false';
+		Helper::addFilter($hook, $callback, $priority);
+	}
+
+	/**
+	 * Disable purchase.
+	 * [Action: woocommerce_out_of_stock_message].
+	 * [Callback: __return_false].
+	 *
+	 * @access public
+	 * @param mixed $priority
+	 * @return void
+	 */
+	public static function disablePurchase(int $priority = 20)
+	{
+		$hook = 'woocommerce_out_of_stock_message';
+		$callback = '__return_false';
+		Helper::addFilter($hook, $callback, $priority);
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public static function addAction(string $hook, $callback, int $priority = 10, int $args = 1)
+	{
+		$hook = Helper::undash("woocommerce-{$hook}");
+		Helper::addAction($hook, $callback, $priority, $args);
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public static function removeAction(string $hook, $callback, int $priority = 10)
+	{
+		$hook = Helper::undash("woocommerce-{$hook}");
+		Helper::removeAction($hook, $callback, $priority);
 	}
 }
