@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace VanilleThird;
 
 use VanillePlugin\inc\{
-	TypeCheck, Arrayify, Hook, GlobalConst
+	Globals, TypeCheck, Arrayify, Stringify, Hook
 };
 
 /**
@@ -23,9 +23,15 @@ use VanillePlugin\inc\{
  */
 final class Helper
 {
+	/**
+	 * @inheritdoc
+	 */
+	public static function cache() : bool
+	{
+		return Globals::cache();
+	}
+	
     /**
-	 * Check array.
-	 *
 	 * @inheritdoc
 	 */
 	public static function isArray($value) : bool
@@ -34,8 +40,6 @@ final class Helper
     }
 
 	/**
-	 * Check class.
-	 *
 	 * @inheritdoc
 	 */
 	public static function isClass(string $class, bool $autoload = true) : bool
@@ -44,8 +48,14 @@ final class Helper
 	}
 
 	/**
-	 * Check method.
-	 *
+	 * @inheritdoc
+	 */
+	public static function isSubClassOf(string $sub, string $class) : bool
+	{
+		return TypeCheck::isSubClassOf($sub, $class);
+	}
+
+	/**
 	 * @inheritdoc
 	 */
 	public static function hasMethod($object, string $method) : bool
@@ -54,8 +64,6 @@ final class Helper
 	}
 
 	/**
-	 * Check function.
-	 *
 	 * @inheritdoc
 	 */
 	public static function isFunction(string $function) : bool
@@ -64,8 +72,6 @@ final class Helper
 	}
 
 	/**
-	 * Get array keys.
-	 *
 	 * @inheritdoc
 	 */
 	public static function keys(array $array) : array
@@ -74,18 +80,46 @@ final class Helper
 	}
 
 	/**
-	 * Get site cache status.
-	 * 
 	 * @inheritdoc
 	 */
-	public static function cache() : bool
+	public static function undash(string $string, bool $isGlobal = false) : string
 	{
-		return GlobalConst::cache();
+		return Stringify::undash($string, $isGlobal);
 	}
 
 	/**
-	 * Check hook filter.
-	 *
+	 * @inheritdoc
+	 */
+	public static function sanitizeText(string $string) : string
+	{
+		return Stringify::sanitizeText($string);
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public static function addAction(string $hook, $callback, int $priority = 10, int $args = 1)
+	{
+		Hook::addAction($hook, $callback, $priority, $args);
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public static function removeAction(string $hook, $callback, int $priority = 10) : bool
+	{
+		return Hook::removeAction($hook, $callback, $priority);
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public static function addFilter(string $hook, $callback, int $priority = 10, int $args = 1)
+	{
+		Hook::addFilter($hook, $callback, $priority, $args);
+	}
+
+	/**
 	 * @inheritdoc
 	 */
 	public static function hasFilter(string $hook, $callback = false)
@@ -94,18 +128,6 @@ final class Helper
 	}
 
 	/**
-	 * Add hook filter.
-	 *
-	 * @inheritdoc
-	 */
-	public static function addFilter(string $hook, $callback, int $priority = 10, int $args = 1)
-	{
-		return Hook::addFilter($hook, $callback, $priority, $args);
-	}
-
-	/**
-	 * Remove hook filter.
-	 *
 	 * @inheritdoc
 	 */
 	public static function removeFilter(string $hook, $callback, int $priority = 10) : bool
@@ -114,8 +136,6 @@ final class Helper
 	}
 
 	/**
-	 * Apply hook filter.
-	 *
 	 * @inheritdoc
 	 */
 	public static function applyFilter(string $hook, $value, $args = null)
