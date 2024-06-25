@@ -17,34 +17,31 @@ namespace VanilleThird\inc\module;
 use VanilleThird\Helper;
 
 /**
- * Opcache module helper class.
- * 
- * @see https://www.php.net/manual/en/book.opcache.php
+ * Redis module helper class.
+ *
+ * @see https://github.com/phpredis/phpredis
  */
-final class Opcache
+final class Redis
 {
 	/**
 	 * Check module is enabled.
-	 * 
+	 *
 	 * @access public
 	 * @return bool
 	 */
 	public static function isEnabled() : bool
 	{
-		return Helper::isFunction('opcache_reset');
+		return Helper::isClass('\Redis');
 	}
 	
 	/**
 	 * Purge cache.
-	 * 
+	 *
 	 * @access public
 	 * @return bool
 	 */
 	public static function purge() : bool
 	{
-		if ( Helper::isFunction('opcache_reset') ) {
-			return opcache_reset();
-		}
 		return false;
 	}
 }

@@ -26,7 +26,7 @@ final class Helper
 	/**
 	 * @inheritdoc
 	 */
-	public static function cache() : bool
+	public static function hasCache() : bool
 	{
 		return Globals::cache();
 	}

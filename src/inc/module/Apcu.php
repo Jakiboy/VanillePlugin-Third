@@ -24,7 +24,7 @@ use VanilleThird\Helper;
 final class Apcu
 {
 	/**
-	 * Check module plugin is enabled.
+	 * Check module is enabled.
 	 * 
 	 * @access public
 	 * @return bool

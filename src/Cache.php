@@ -67,7 +67,7 @@ final class Cache
 			}
 		}
 
-		return Helper::cache();
+		return Helper::hasCache();
 	}
 
 	/**

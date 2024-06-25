@@ -24,7 +24,7 @@ use VanilleThird\Helper;
 final class Memcached
 {
 	/**
-	 * Check module plugin is enabled.
+	 * Check module is enabled.
 	 *
 	 * @access public
 	 * @return bool
