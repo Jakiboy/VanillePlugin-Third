@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace VanilleThird\inc\plugin;
 
+use PHPUnit\TextUI\Help;
 use VanilleThird\Helper;
 
 /**
@@ -77,22 +78,6 @@ final class Polylang
 	}
 
 	/**
-	 * Get referer Id.
-	 *
-	 * @access public
-	 * @return mixed
-	 */
-	public static function getRefererId()
-	{
-		if ( ($url = wp_get_referer()) ) {
-			if ( strpos($url, 'admin.php') == false ) {
-				return url_to_postid($url);
-			}
-		}
-		return false;
-	}
-
-	/**
 	 * Get locale by Id.
 	 *
 	 * @access public
@@ -101,7 +86,7 @@ final class Polylang
 	public static function getLocalById()
 	{
 		if ( Helper::isFunction('pll_get_post_language') ) {
-			if ( ($id = self::getRefererId()) ) {
+			if ( ($id = Helper::getRefererId()) && !Helper::isAdmin() ) {
 				if ( ($locale = pll_get_post_language($id, 'locale')) ) {
 					return $locale;
 				}

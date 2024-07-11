@@ -15,7 +15,8 @@ declare(strict_types=1);
 namespace VanilleThird;
 
 use VanillePlugin\inc\{
-	Globals, TypeCheck, Arrayify, Stringify, Hook
+	Globals, TypeCheck, Arrayify,
+	Stringify, Hook, Page, Post
 };
 
 /**
@@ -93,6 +94,22 @@ final class Helper
 	public static function sanitizeText(string $string) : string
 	{
 		return Stringify::sanitizeText($string);
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public static function getRefererId() : string
+	{
+		return Post::getRefererId();
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public static function isAdmin() : bool
+	{
+		return Page::isAdmin();
 	}
 
 	/**
