@@ -97,21 +97,20 @@ final class Cache
 
 	/**
 	 * Load geotargeting cookie before third-party cache.
-	 * [Action: init].
-	 * [Action: load].
+	 * [Action: front-init].
 	 *
 	 * @access public
-	 * @param string $name, Cookie name
+	 * @param string $cookie
 	 * @return bool
 	 */
-	public static function loadGeo(string $name) : bool
+	public static function setTarget(string $cookie) : bool
 	{
 		if ( !self::isActive() ) {
 
 			foreach (self::PLUGINS as $plugn) {
 				$plugn = __NAMESPACE__ . "\\inc\\plugin\\{$plugn}";
 				if ( $plugn::isEnabled() && Helper::hasMethod($plugn, 'loadGeo') ) {
-					$plugn::loadGeo($name);
+					$plugn::setTarget($cookie);
 				}
 				return true;
 			}
@@ -122,21 +121,21 @@ final class Cache
 	}
 
 	/**
-	 * Enable geotargeting through third-party cache.
+	 * Enable geotargeting support for third-party cache.
 	 * [Action: {plugin}-activate].
 	 *
 	 * @access public
-	 * @param string $name, Cookie name
+	 * @param string $cookie
 	 * @return bool
 	 */
-	public static function enableGeo(string $name) : bool
+	public static function enableTarget(string $cookie) : bool
 	{
 		if ( self::isActive() ) {
 
 			foreach (self::PLUGINS as $plugn) {
 				$plugn = __NAMESPACE__ . "\\inc\\plugin\\{$plugn}";
-				if ( $plugn::isEnabled() && Helper::hasMethod($plugn, 'enableGeo') ) {
-					$plugn::enableGeo($name);
+				if ( $plugn::isEnabled() && Helper::hasMethod($plugn, 'enableTarget') ) {
+					$plugn::enableTarget($cookie);
 				}
 				return true;
 			}
@@ -147,21 +146,21 @@ final class Cache
 	}
 
 	/**
-	 * Disable third-party cache geotargeting.
+	 * Disable geotargeting support for third-party cache.
 	 * [Action: {plugin}-deactivate].
 	 *
 	 * @access public
-	 * @param string $name, Cookie name
+	 * @param string $cookie
 	 * @return bool
 	 */
-	public static function disableGeo(string $name) : bool
+	public static function disableTarget(string $cookie) : bool
 	{
 		if ( self::isActive() ) {
 
 			foreach (self::PLUGINS as $plugn) {
 				$plugn = __NAMESPACE__ . "\\inc\\plugin\\{$plugn}";
-				if ( $plugn::isEnabled() && Helper::hasMethod($plugn, 'disableGeo') ) {
-					$plugn::disableGeo($name);
+				if ( $plugn::isEnabled() && Helper::hasMethod($plugn, 'disableTarget') ) {
+					$plugn::disableTarget($cookie);
 				}
 				return true;
 			}

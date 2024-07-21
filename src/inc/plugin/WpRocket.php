@@ -30,7 +30,7 @@ final class WpRocket
 
 	/**
 	 * Check whether plugin is enabled.
-	 * 
+	 *
 	 * @access public
 	 * @return bool
 	 */
@@ -41,7 +41,7 @@ final class WpRocket
 
 	/**
 	 * Purge cache.
-	 * 
+	 *
 	 * @access public
 	 * @return bool
 	 */
@@ -55,41 +55,41 @@ final class WpRocket
 	}
 
 	/**
-	 * Force loading geotargeting rules through cache using cookies.
-	 * 
+	 * Force geotargeting rules through cache using cookies.
+	 *
 	 * @access public
-	 * @param string $name
+	 * @param string $cookie
 	 * @return void
 	 */
-	public static function loadGeo(string $name)
+	public static function setTarget(string $cookie)
 	{
 		// Set options
-		static::$options['geotargeting'] = $name;
+		static::$options['geotargeting'] = "--{$cookie}";
 
 		// Creates cache file for each value of a specified cookie
-		Helper::addFilter('rocket_cache_dynamic_cookies', [new self, 'setCookies'], 80);
+		Helper::addFilter('rocket_cache_dynamic_cookies', [static::class, 'setCookies'], 80);
 
 		// Prevents caching until the specified cookie is set
-		Helper::addFilter('rocket_cache_mandatory_cookies', [new self, 'setCookies'], 80);
+		Helper::addFilter('rocket_cache_mandatory_cookies', [static::class, 'setCookies'], 80);
 	}
 
 	/**
-	 * Force enabling geotargeting through cache using cookies.
-	 * 
+	 * Enabling geotargeting through cache using cookies.
+	 *
 	 * @access public
-	 * @param string $name
+	 * @param string $cookie
 	 * @return void
 	 */
-	public static function enableGeo(string $name)
+	public static function enableTarget(string $cookie)
 	{
 		// Set options
-		static::$options['geotargeting'] = $name;
+		static::$options['geotargeting'] = "--{$cookie}";
 
 		// Creates cache file for each value of a specified cookie
-		Helper::addFilter('rocket_cache_dynamic_cookies', [new self, 'setCookies'], 80);
+		Helper::addFilter('rocket_cache_dynamic_cookies', [static::class, 'setCookies'], 80);
 
 		// Prevents caching until the specified cookie is set
-		Helper::addFilter('rocket_cache_mandatory_cookies', [new self, 'setCookies'], 80);
+		Helper::addFilter('rocket_cache_mandatory_cookies', [static::class, 'setCookies'], 80);
 
 		// Update rewrite
 		self::updateRewrite();
@@ -103,21 +103,21 @@ final class WpRocket
 
 	/**
 	 * Disabling cache geotargeting.
-	 * 
+	 *
 	 * @access public
-	 * @param string $name
+	 * @param string $cookie
 	 * @return void
 	 */
-	public static function disableGeo(string $name)
+	public static function disableTarget(string $cookie)
 	{
 		// Set options
-		static::$options['geotargeting'] = $name;
+		static::$options['geotargeting'] = "--{$cookie}";
 		
 		// Remove dynamic cookies
-		Helper::removeFilter('rocket_cache_dynamic_cookies', [new self, 'setCookies'], 80);
+		Helper::removeFilter('rocket_cache_dynamic_cookies', [static::class, 'setCookies'], 80);
 
 		// Remove mandatory cookies
-		Helper::removeFilter('rocket_cache_mandatory_cookies', [new self, 'setCookies'], 80);
+		Helper::removeFilter('rocket_cache_mandatory_cookies', [static::class, 'setCookies'], 80);
 
 		// Update rewrite
 		self::updateRewrite();
@@ -130,24 +130,23 @@ final class WpRocket
 	}
 
 	/**
-	 * Cache dynamic cookies,
-	 * [Filter: rocket_cache_dynamic_cookies],
+	 * Cache dynamic cookies.
+	 * [Filter: rocket_cache_dynamic_cookies].
 	 * [Filter: rocket_cache_mandatory_cookies].
-	 * 
+	 *
 	 * @access public
 	 * @param array $cookies
 	 * @return array
 	 */
 	public static function setCookies(array $cookies) : array
 	{
-		$name = static::$options['geotargeting'] ?? '--default-country';
-		$cookies[] = $name;
+		$cookies[] = static::$options['geotargeting'] ?? '--default-country';
 		return $cookies;
 	}
 
 	/**
 	 * Update rewrite (htaccess).
-	 * 
+	 *
 	 * @access public
 	 * @return void
 	 */
@@ -160,7 +159,7 @@ final class WpRocket
 
 	/**
 	 * Regenerate configuration (file).
-	 * 
+	 *
 	 * @access public
 	 * @return void
 	 */
