@@ -22,7 +22,20 @@ use VanilleThird\inc\plugin\Amp as Plugin;
 final class Amp
 {
 	/**
+	 * Check whether AMP plugin is enabled.
+	 * [Action: ini].
+	 *
+	 * @access public
+	 * @return bool
+	 */
+	public static function isEnabled() : bool
+	{
+		return Plugin::isEnabled();
+	}
+
+	/**
 	 * Check whether AMP is active.
+	 * [Action: setup].
 	 * [Action: head].
 	 *
 	 * @access public

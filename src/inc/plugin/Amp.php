@@ -25,6 +25,25 @@ use VanilleThird\Helper;
 final class Amp
 {
 	/**
+	 * Check whether plugin is enabled.
+	 *
+	 * @access public
+	 * @return bool
+	 */
+	public static function isEnabled() : bool
+	{
+		if ( Helper::isFunction('amp_is_enabled') ) {
+			return true;
+		}
+
+		if ( Helper::isFunction('ampforwp_init') ) {
+			return true;
+		}
+		
+		return false;
+	}
+
+	/**
 	 * Check whether plugin is active.
 	 *
 	 * @access public
